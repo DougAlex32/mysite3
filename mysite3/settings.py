@@ -77,11 +77,13 @@ WSGI_APPLICATION = 'mysite3.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+MONGO_URI=os.getenv('MONG_URI')
+print('---mongo uri-----')
+print(MONGO_URI)
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+        'default': {
+           
+        }
 }
 
 
