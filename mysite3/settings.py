@@ -35,6 +35,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    "polls.apps.PollsConfig",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -77,10 +78,17 @@ WSGI_APPLICATION = 'mysite3.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+MONGO_URI=os.getenv('MONG_URI')
+print('---mongo uri-----')
+print(MONGO_URI)
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+       'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'mysite3',
+        'USER': 'postgres',
+        'PASSWORD': 'Bigbro12!',
+        'HOST': '127.0.0.1',
+        'PORT': '5432',
     }
 }
 
