@@ -6,6 +6,7 @@ from datetime import datetime
 from dotenv import load_dotenv
 load_dotenv()
 from bson import ObjectId
+from .models import Question
 
 client = MongoClient(os.getenv('MONGO_URI'))
 db = client['mysite3']
@@ -49,9 +50,22 @@ def delete_question(request, question_id):
     else:
         return HttpResponse(f"Question with ID {question_id} not found.")
 
+def detail(request, question_id):
+    return HttpResponse("You're looking at question %s." % question_id)
 
+
+def results(request, question_id):
+    response = "You're looking at the results of question %s."
+    return HttpResponse(response % question_id)
+
+
+def vote(request, question_id):
+    return HttpResponse("You're voting on question %s." % question_id)
 
 
 def index(request):
-    return HttpResponse("Hello, world. You're at the poll index")
+    latest_question_list = Question.objects.order_by("-pub_date")[:5]
+    output = ", ".join([q.question_text for q in latest_question_list])
+    return HttpResponse(output)
+
 # Create your views here.
