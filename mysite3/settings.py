@@ -14,6 +14,10 @@ from pathlib import Path
 import os
 from dotenv import load_dotenv
 load_dotenv()
+import psycopg2
+import dj_database_url
+DATABASE_URL = os.getenv("DATABASE_URL")
+conn = psycopg2.connect(DATABASE_URL)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -82,14 +86,8 @@ MONGO_URI=os.getenv('MONG_URI')
 print('---mongo uri-----')
 print(MONGO_URI)
 DATABASES = {
-       'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'mysite3',
-        'USER': 'postgres',
-        'PASSWORD': 'Bigbro12!',
-        'HOST': '127.0.0.1',
-        'PORT': '5432',
-    }
+       'default': dj_database_url.config(conn_max_age=600, ssl_require=True)
+    
 }
 
 
