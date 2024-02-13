@@ -16,8 +16,24 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from core import views as core_views
+from django.contrib.auth import views as auth_views
+from core.views import logout_view
+from core.views import signup_view
+from core.views import contact_view
+
+class LogoutView(auth_views.LogoutView):
+    def get(self, request, *args, **kwargs):
+        return self.post(request, *args, **kwargs)
 
 urlpatterns = [
+    path('', core_views.home, name='home'),  # Project homepage
     path("polls/", include('polls.urls')),
-    path('admin/', admin.site.urls),
+    path("admin/", admin.site.urls),
+    path('logout/', logout_view, name='logout'),
+    path('login/', admin.site.login, name='login'),
+    path('signup/', signup_view, name='signup'),
+   
+
+      # Add this line
 ]
