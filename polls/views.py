@@ -2,73 +2,16 @@ from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.http import Http404
 from .models import Question,Choice
+from .forms import NameForm,ContactForm
+from django.core.mail import send_mail
 from django.template import loader
 from django.urls import reverse
 from datetime import datetime
 from django.views import generic
 from django.utils import timezone
-# from pymongo import MongoClient
 import os
-# from dotenv import load_dotenv
-# load_dotenv()
 from bson import ObjectId
 
-
-# client = MongoClient(os.getenv('MONGO_URI'))
-# db = client['mysite3']
-# print(db.list_collection_names())
-# print(db.polls_question.find_one())
-
-# new_question_id = db.polls_question.insert_one({
-#     'question text' : 'What ORM do we use from MongoDB?',
-#     'pub_date': datetime.now()
-# })
-# print('new polls question', db.polls_question.find_one({'pub_date': datetime.now()}))
-
-# print( 'searched question', db.polls_question.find_one({ '_id': ObjectId('65bea3bf0844e3eadfbc684e')}))
-
-# def search_question_by_text(request, text):
-#     question = db.polls_question.find_one({'question text': text})
-#     if question:
-#         return HttpResponse(f"Found question: {question}")
-#     else:
-#         return HttpResponse(f"Question with text '{text}' not found.")
-
-# def search_all_questions_by_pub_date(request, pub_date):
-#     questions = db.polls_question.find({'pub_date': pub_date})
-#     result = [f"Question: {q}" for q in questions]
-#     return HttpResponse(result)
-
-# def update_question(request, question_id):
-#     result = db.polls_question.update_one(
-#         {'_id': ObjectId(question_id)},
-#         {'$set': {'pub_date': datetime.now()}}
-#     )
-#     if result.modified_count > 0:
-#         return HttpResponse(f"Question with ID {question_id} updated successfully.")
-#     else:
-#         return HttpResponse(f"Question with ID {question_id} not found.")
-
-# def delete_question(request, question_id):
-#     result = db.polls_question.delete_one({'_id': ObjectId(question_id)})
-#     if result.deleted_count > 0:
-#         return HttpResponse(f"Question with ID {question_id} deleted successfully.")
-#     else:
-#         return HttpResponse(f"Question with ID {question_id} not found.")
-
-# def detail(request, question_id):
-#     question = get_object_or_404(Question, pk=question_id)
-#     return render(request, "polls/detail.html", {"question": question})
-
-
-# def results(request, question_id):
-#     question = get_object_or_404(Question, pk=question_id)
-#     return render(request, "polls/results.html", {"question": question})
-
-#  def index(request):
-#     latest_question_list = Question.objects.order_by("-pub_date")[:5]
-#     context = {"latest_question_list": latest_question_list}
-#     return render(request, "polls/index.html", context)
 
 class IndexView(generic.ListView):
     template_name = 'polls/index.html'
@@ -113,6 +56,58 @@ def vote(request, question_id):
         # with POST data. This prevents data from being posted twice if a
         # user hits the Back button.
         return HttpResponseRedirect(reverse("polls:results", args=(question.id,)))
+    
+def get_name(request):
+    if request.method == "POST":
+        form = NameForm(request.POST)
+        if form.is_valid():
+            # Process the form data
+            your_name = form.cleaned_data['your_name']
+            # Perform any necessary actions with the form data
+            # For example, save it to the database
+            # Then redirect to a new URL
+            return HttpResponseRedirect("/thanks/")
+    else:
+        form = NameForm()
+    return render(request, "name.html", {"form": form})
+
+def contact_view(request):
+    if request.method == 'POST':
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            subject = form.cleaned_data['subject']
+            message = form.cleaned_data['message']
+            sender = form.cleaned_data['sender']
+            cc_myself = form.cleaned_data['cc_myself']
+
+            # Additional processing logic (e.g., sending email) goes here
+
+            return HttpResponseRedirect('/thanks/')
+    else:
+        form = ContactForm()
+
+    return render(request, 'contact.html', {'form': form})
+
+def contact(request):
+    if request.method == 'POST':
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            subject = form.cleaned_data['subject']
+            message = form.cleaned_data['message']
+            sender = form.cleaned_data['sender']
+            cc_myself = form.cleaned_data['cc_myself']
+
+            recipients = ['your_email@example.com']
+            if cc_myself:
+                recipients.append(sender)
+
+            send_mail(subject, message, sender, recipients)
+
+            return render(request, 'contact_success.html')
+    else:
+        form = ContactForm()
+
+    return render(request, 'contact.html', {'form': form})
 
 
 
