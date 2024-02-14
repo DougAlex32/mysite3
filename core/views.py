@@ -1,9 +1,13 @@
 from django.shortcuts import render
-from django.contrib.auth import logout
+from django.contrib.auth import logout, login, authenticate
 from django.shortcuts import redirect
 from django.contrib.auth.forms import UserCreationForm
 from django.http import HttpResponseRedirect
 from polls.forms import ContactForm
+from django.contrib.auth.forms import  AuthenticationForm, UserCreationForm
+from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 
 def home(request):
     return render(request, 'home.html')
@@ -38,6 +42,9 @@ def contact_view(request):
         form = ContactForm()
 
     return render(request, 'contact.html', {'form': form})
+
+def login(request):
+    """how we login to our app"""
 
 
 
