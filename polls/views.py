@@ -80,11 +80,15 @@ def contact_view(request):
             sender = form.cleaned_data['sender']
             cc_myself = form.cleaned_data['cc_myself']
 
-            # Additional processing logic (e.g., sending email) goes here
+            recipients = ["info@example.com"]
+            if cc_myself:
+             recipients.append(sender)
 
-            return HttpResponseRedirect('/thanks/')
-    else:
-        form = ContactForm()
+            send_mail(subject, message, sender, recipients)
+            return HttpResponseRedirect("/")    # Additional processing logic (e.g., sending email) goes here
+
+        else:
+            form = ContactForm()
 
     return render(request, 'contact.html', {'form': form})
 
